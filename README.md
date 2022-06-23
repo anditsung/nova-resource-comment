@@ -8,10 +8,10 @@ Nova3
 ![screenshot 2](https://github.com/anditsung/nova-resource-comment/raw/main/screenshots/Screen%20Shot%202022-06-23%20at%2010.43.48.png)
 
 Nova4
-![screenshot 1](https://github.com/anditsung/nova-resource-comment/raw/main/screenshots/Screen%20Shot%202022-06-23%20at%2014.26.32.png)
-![screenshot 2](https://github.com/anditsung/nova-resource-comment/raw/main/screenshots/Screen%20Shot%202022-06-23%20at%2014.26.40.png)
-![screenshot 3](https://github.com/anditsung/nova-resource-comment/raw/main/screenshots/Screen%20Shot%202022-06-23%20at%2014.26.46.png)
-![screenshot 4](https://github.com/anditsung/nova-resource-comment/raw/main/screenshots/Screen%20Shot%202022-06-23%20at%2014.26.59.png)
+![screenshot 1](https://github.com/anditsung/nova-resource-comment/raw/support-nova-4/screenshots/Screen%20Shot%202022-06-23%20at%2014.26.32.png)
+![screenshot 2](https://github.com/anditsung/nova-resource-comment/raw/support-nova-4/screenshots/Screen%20Shot%202022-06-23%20at%2014.26.40.png)
+![screenshot 3](https://github.com/anditsung/nova-resource-comment/raw/support-nova-4/screenshots/Screen%20Shot%202022-06-23%20at%2014.26.46.png)
+![screenshot 4](https://github.com/anditsung/nova-resource-comment/raw/support-nova-4/screenshots/Screen%20Shot%202022-06-23%20at%2014.26.59.png)
 
 ## Installation
 
