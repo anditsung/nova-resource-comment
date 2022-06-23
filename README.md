@@ -3,8 +3,8 @@
 # A commenting field for laravel nova
 
 ## Screenshot
-![screenshot 1](https://raw.githubusercontent.com/anditsung/nova-resource-comment/main/screenshots/Screen Shot 2022-06-23 at 09.27.56.png)
-![screenshot 2](https://raw.githubusercontent.com/anditsung/nova-resource-comment/main/screenshots/Screen Shot 2022-06-23 at 10.43.48.png)
+![screenshot 1](https://github.com/anditsung/nova-resource-comment/raw/main/screenshots/Screen%20Shot%202022-06-23%20at%2009.27.56.png)
+![screenshot 2](https://github.com/anditsung/nova-resource-comment/raw/main/screenshots/Screen%20Shot%202022-06-23%20at%2010.43.48.png)
 
 ## Installation
 
