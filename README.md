@@ -76,7 +76,7 @@ Nova's default value for per page via relationship is 5. If you like yo set this
 
 ```php
 HasManyComment::make()
-    ->maxCount(25),
+    ->maxComment(25),
 ```
 
 Now you can comment from the detail view of any resource
