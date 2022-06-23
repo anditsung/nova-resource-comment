@@ -1,72 +1,90 @@
 <template>
     <div v-if="authorizedToCreate || hasComments">
-        <heading :level="1" class="mb-3" v-html="field.name" />
-
-        <card>
-            <div
-                class="border-b border-40"
-                :class="{'remove-bottom-border' : !hasComments }"
-                v-if="authorizedToCreate"
+        <Heading
+            :level="1"
+            class="mb-3 flex items-center">
+            <span v-html="field.name" />
+            <button
+                v-if="! loading && field.hasManyRelationship"
+                @click="handleCollapsableChange"
+                class="rounded border border-transparent h-6 w-6 ml-1 inline-flex items-center justify-center focus:outline-none focus:ring ring-primary-200"
+                :aria-label="__('Toggle Collapsed')"
+                :aria-expanded="shouldBeCollapsed === false ? 'true' : 'false'"
             >
-                <div class="py-6 px-8">
-                    <textarea
-                        class="w-full form-control form-input form-input-bordered py-3 h-auto mt-2"
-                        :class="{ 'border-danger' : commentError }"
-                        v-model="comment"
-                        rows="5"
-                        :placeholder="__('Write a comment')"
-                    ></textarea>
+                <CollapseButton :collapsed="shouldBeCollapsed" />
+            </button>
+        </Heading>
 
-                    <help-text class="help-text mt-2 text-danger" v-if="commentError">
-                        {{ __(commentError) }}
-                    </help-text>
+        <template v-if="! shouldBeCollapsed">
+            <Card>
+                <div
+                    class="border-b border-gray-100 dark:border-gray-700"
+                    :class="{'border-transparent' : ! hasComments }"
+                    v-if="authorizedToCreate"
+                >
+                    <div class="w-full py-6 px-6">
+                        <textarea
+                            class="w-full form-control form-input form-input-bordered py-3 h-auto mt-2"
+                            :class="{ 'form-input-border-error' : commentError }"
+                            v-model="comment"
+                            rows="5"
+                            :placeholder="__('Write a comment')"
+                        ></textarea>
 
-                    <div class="flex justify-end">
-                        <button class="btn btn-default btn-primary inline-flex items-center relative mt-4"
+                        <div class="flex items-start justify-between mt-3">
+                            <HelpText class="mt-2 help-text-error" v-if="commentError">
+                                {{ __(commentError) }}
+                            </HelpText>
+                            <DefaultButton
+                                class="ml-auto"
                                 type="submit"
                                 @click="createComment">
-                            {{ __('Save Comment') }}
-                        </button>
+                                {{ __('Save Comment') }}
+                            </DefaultButton>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <loading-view
-                :loading="loading"
-            >
-                <div v-if="hasComments" >
-                    <div class="px-8">
-                        <comment v-for="(comment, index) in comments"
-                                 class="py-3 border-b border-40"
-                                 :class="{ 'remove-bottom-border' : index === comments.length - 1}"
-                                 :key="index"
-                                 :resource="comment"
-                                 :resourceName="resourceName"
-                                 :canDelete="resource.authorizedToDelete"
-                        />
+                <LoadingView
+                    :loading="loading"
+                >
+                    <div v-if="hasComments" >
+                        <div class="px-6">
+                            <Comment v-for="(comment, index) in comments"
+                                     class="py-3 border-b border-gray-100 dark:border-gray-700"
+                                     :class="{ 'border-transparent' : index === comments.length - 1}"
+                                     :key="index"
+                                     :resource="comment"
+                                     :resourceName="resourceName"
+                                     :canDelete="resource.authorizedToDelete"
+                            />
+                        </div>
                     </div>
-                </div>
-            </loading-view>
-        </card>
+                </LoadingView>
+            </Card>
+        </template>
     </div>
 </template>
 
 <script>
-import {
-    Minimum,
-    Deletable,
-    InteractsWithResourceInformation,
-} from 'laravel-nova'
+import { mapProps } from 'laravel-nova'
+import Collapsable from "nova-mixins/Collapsable"
+import InteractsWithResourceInformation from "nova-mixins/InteractsWithResourceInformation"
+import mininum from "nova-util/minimum"
 import { CancelToken, Cancel } from 'axios'
 import Comment from "./Comment"
 
 export default {
     mixins: [
-        Deletable,
+        Collapsable,
         InteractsWithResourceInformation,
     ],
 
-    props: ['resourceName', 'resourceId', 'resource', 'field'],
+    props: {
+        ...mapProps(['resourceId', 'field']),
+        resourceName: {},
+        resource: {},
+    },
 
     components: {
         Comment,
@@ -82,8 +100,8 @@ export default {
     }),
 
     async created() {
-        if (Nova.missingResource(this.field.resourceName)) {
-            return this.$router.push({ name: '404' })
+        if (! this.resourceInformation) {
+            return
         }
 
         await this.getComments()
@@ -93,10 +111,16 @@ export default {
 
     methods: {
         getComments() {
+            if (this.shouldBeCollapsed) {
+                this.loading = false
+                return
+            }
+
             this.loading = true
+            this.commentError = null
 
             this.$nextTick(() => {
-                return Minimum(
+                return mininum(
                     Nova.request().get('/nova-api/' + this.field.resourceName, {
                             params: this.commentRequestQueryString,
                             cancelToken: new CancelToken(canceller => {
@@ -112,8 +136,6 @@ export default {
                         this.comments = data.resources
 
                         this.loading = false
-
-                        Nova.$emit('comments-loaded')
                     })
                     .catch(e => {
                         if (e instanceof Cancel) {
@@ -154,9 +176,32 @@ export default {
             this.comment = ''
             this.commentError = ''
         },
+
+        async handleCollapsableChange() {
+            this.loading = true
+
+            this.toggleCollapse()
+
+            if (! this.collapsed) {
+                await this.getComments()
+            } else {
+                this.loading = false
+            }
+        },
     },
 
     computed: {
+        /**
+         * Determine if the index view should be collapsed.
+         */
+        shouldBeCollapsed() {
+            return this.collapsed && this.field.hasManyRelationship != null
+        },
+
+        localStorageKey() {
+            return `nova.navigation.${this.field.resourceName}.collapsed`
+        },
+
         commentRequestQueryString() {
             return {
                 orderBy: 'created_at',

@@ -2,18 +2,14 @@
     <div>
         <div class="flex items-center w-full">
             <div class="flex items-center">
-                <router-link
+                <Link
                     v-if="commenter.viewable && commenter.value"
-                    :to="{
-                        name: 'detail',
-                        params: {
-                            resourceName: resourceName,
-                            resourceId: commenter.belongsToId
-                        }
-                    }"
-                    class="no-underline font-bold dim text-primary"
-                    v-text="commenter.value"
-                />
+                    @click.stop
+                    :href="$url(`/resources/${resourceName}/${commenter.belongsToId}`)"
+                    class="link-default"
+                >
+                    {{ commenter.value }}
+                </Link>
                 <div v-else-if="commenter.value" class="font-bold">{{ commenter.value }}</div>
                 <div v-else>-</div>
                 <div class="ml-2 italic text-sm">comment on</div>

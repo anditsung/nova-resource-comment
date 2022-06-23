@@ -1,3 +1,5 @@
-Nova.booting((Vue, router, store) => {
-  Vue.component('detail-has-many-comment-field', require('./components/DetailField'))
+import DetailField from "./components/DetailField";
+
+Nova.booting((app, store) => {
+    app.component('detail-has-many-comment-field', DetailField)
 })

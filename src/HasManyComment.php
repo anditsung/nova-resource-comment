@@ -9,6 +9,7 @@ use Laravel\Nova\Contracts\RelatableField;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ResourceRelationshipGuesser;
+use Laravel\Nova\Panel;
 
 class HasManyComment extends Field implements ListableField, RelatableField
 {
@@ -64,7 +65,27 @@ class HasManyComment extends Field implements ListableField, RelatableField
 
         $this->resourceClass = $resource;
         $this->resourceName = $resource::uriKey();
-        $this->hasManyRelationship = $this->attribute;
+        $this->hasManyRelationship = $this->attribute = $attribute ?? ResourceRelationshipGuesser::guessRelation($name);
+    }
+
+    /**
+     * Get the relationship name.
+     *
+     * @return string
+     */
+    public function relationshipName()
+    {
+        return $this->hasManyRelationship;
+    }
+
+    /**
+     * Get the relationship type.
+     *
+     * @return string
+     */
+    public function relationshipType()
+    {
+        return 'hasMany';
     }
 
     /*
@@ -116,16 +137,29 @@ class HasManyComment extends Field implements ListableField, RelatableField
     }
 
     /**
+     * Make current field behaves as panel.
+     *
+     * @return \Laravel\Nova\Panel
+     */
+    public function asPanel()
+    {
+        return Panel::make($this->name)
+            ->withMeta([
+                'fields' => [$this],
+                'prefixComponent' => true,
+            ])->withComponent('relationship-panel');
+    }
+
+    /**
      * Prepare the field for JSON serialization.
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return array_merge([
-            'listable' => true,
             'hasManyRelationship' => $this->hasManyRelationship,
+            'relatable' => true,
             'perPage'=> $this->resourceClass::$perPageViaRelationship,
             'resourceName' => $this->resourceName,
             'singularLabel' => $this->singularLabel ?? $this->resourceClass::singularLabel(),
