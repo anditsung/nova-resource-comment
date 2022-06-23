@@ -17,12 +17,11 @@
                         :placeholder="__('Write a comment')"
                     ></textarea>
 
-                    <help-text class="help-text mt-2 text-danger" v-if="commentError">
-                        {{ __(commentError) }}
-                    </help-text>
-
-                    <div class="flex justify-end">
-                        <button class="btn btn-default btn-primary inline-flex items-center relative mt-4"
+                    <div class="flex items-start justify-between">
+                        <help-text class="help-text mt-2 text-danger" v-if="commentError">
+                            {{ __(commentError) }}
+                        </help-text>
+                        <button class="btn btn-default btn-primary inline-flex items-center relative mt-4 ml-auto"
                                 type="submit"
                                 @click="createComment">
                             {{ __('Save Comment') }}
