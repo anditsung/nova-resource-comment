@@ -64,7 +64,7 @@ class Comment extends Resource
                 })
                 ->onlyOnIndex(),
 
-            BelongsTo::make(__('Commenter'), 'commenter', config('nova-comments.commenter.nova-resource'))
+            BelongsTo::make(__('Commenter'), 'commenter', config('nova-comment.commenter'))
                 ->exceptOnForms(),
 
             DateTime::make(__('Created'), 'created_at')

@@ -8,7 +8,7 @@
                 :class="{'remove-bottom-border' : !hasComments }"
                 v-if="authorizedToCreate"
             >
-                <div class="py-6 px-8">
+                <div class="py-6 px-6">
                     <textarea
                         class="w-full form-control form-input form-input-bordered py-3 h-auto mt-2"
                         :class="{ 'border-danger' : commentError }"
@@ -35,7 +35,7 @@
                 :loading="loading"
             >
                 <div v-if="hasComments" >
-                    <div class="px-8">
+                    <div class="px-6">
                         <comment v-for="(comment, index) in comments"
                                  class="py-3 border-b border-40"
                                  :class="{ 'remove-bottom-border' : index === comments.length - 1}"
@@ -54,7 +54,6 @@
 <script>
 import {
     Minimum,
-    Deletable,
     InteractsWithResourceInformation,
 } from 'laravel-nova'
 import { CancelToken, Cancel } from 'axios'
@@ -62,7 +61,6 @@ import Comment from "./Comment"
 
 export default {
     mixins: [
-        Deletable,
         InteractsWithResourceInformation,
     ],
 
